@@ -1,0 +1,10 @@
+{
+  "uuid": "%uuid%",
+  "name": "Calculator",
+  "author": "Neocraftr",
+  "description": "Simple calculator with chat commands .calculate or .calc",
+  "icon": "https://raw.githubusercontent.com/Neocraftr/LabyMod-Calculator/master/icons/calculator-addon.png",
+  "version": 1,
+  "category": 2,
+  "mainClass": "de.neocraftr.calculator.Calculator"
+}

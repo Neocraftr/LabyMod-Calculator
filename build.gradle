@@ -1,0 +1,74 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
+        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
+        classpath "de.undercouch:gradle-download-task:4.1.1"
+    }
+}
+apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "de.undercouch.download"
+
+group = "de.neocraftr.calculator"
+archivesBaseName = "Calculator"
+
+minecraft {
+    version = "1.8.9-11.15.1.1855"
+    runDir = "run"
+    mappings = "stable_20"
+}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+dependencies {
+    shade 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.7'
+    compile files("${rootDir.getAbsolutePath()}/libs/lm_api_mc1.8.9.jar")
+}
+
+task updateLabymodApi() {
+    final out = file("${rootDir.getAbsolutePath()}/libs/lm_api_mc1.8.9.jar")
+    outputs.file(out)
+    outputs.upToDateWhen {false}
+
+    doLast {
+        download {
+            src "http://dl.labymod.net/latest/api/files/lm_api_mc1.8.9.jar"
+            dest out
+            onlyIfModified true
+        }
+    }
+}
+
+jar {
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
+
+reobf {
+    jar {
+        setMappingType(net.minecraftforge.gradle.user.ReobfMappingType.NOTCH)
+    }
+}
+
+compileJava {
+    dependsOn updateLabymodApi
+    options.encoding = 'UTF-8'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
+
+repositories {
+    mavenCentral()
+}
